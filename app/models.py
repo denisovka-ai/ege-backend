@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Text
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Text, Date
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
@@ -13,6 +13,12 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     skills = Column(Text, nullable=True)  # JSON с навыками по темам
+
+    # Новые поля для профиля и геймификации
+    school = Column(String(100), nullable=True)
+    city = Column(String(100), nullable=True)
+    streak_days = Column(Integer, default=0, nullable=False)
+    last_activity_date = Column(Date, nullable=True)
 
     attempts = relationship("Attempt", back_populates="user")
 
@@ -55,3 +61,19 @@ class Attempt(Base):
 
     user = relationship("User", back_populates="attempts")
     question = relationship("Question", back_populates="attempts")
+
+
+class Achievement(Base):
+    __tablename__ = "achievements"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), nullable=False)
+    description = Column(String(255), nullable=False)
+    icon = Column(String(100), nullable=True)
+    condition_type = Column(String(50), nullable=False)
+    condition_value = Column(Integer, nullable=False)
+
+class UserAchievement(Base):
+    __tablename__ = "user_achievements"
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    achievement_id = Column(Integer, ForeignKey("achievements.id", ondelete="CASCADE"), primary_key=True)
+    unlocked_at = Column(DateTime, default=datetime.utcnow)
