@@ -15,11 +15,8 @@ services:
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: 30
-      - key: PYTHON_VERSION
-        value: 3.11.0
 
 databases:
   - name: ege-db
     plan: free
     databaseName: ege_db
-    user: postgres
