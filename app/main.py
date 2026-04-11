@@ -7,7 +7,7 @@ import os
 
 app = FastAPI(title="EGE AI Platform")
 
-# CORS (можно оставить, но при одном домене не критично)
+# CORS (на всякий случай)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,14 +25,15 @@ app.include_router(users.router)
 
 # Папка со статикой (собранный фронтенд)
 static_dir = os.path.join(os.path.dirname(__file__), "../static")
+
+# Если папка static существует, раздаём её
 if os.path.exists(static_dir):
     app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 else:
-    @app.get("/")
-    def root():
-        return {"message": "Frontend not built, please run npm run build"}
+    # fallback, чтобы не сломать API
+    print("WARNING: static directory not found, frontend not available")
 
-# Обработчик 404 для React Router (чтобы все пути вели на index.html)
+# Обработчик 404 для React Router (все неизвестные пути отдаём index.html)
 @app.exception_handler(404)
 async def not_found(request: Request, exc):
     index_path = os.path.join(static_dir, "index.html")
