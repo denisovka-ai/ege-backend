@@ -14,7 +14,12 @@ app = FastAPI(title="EGE AI Platform")
 # Разрешаем CORS (можно оставить, но если фронтенд на том же домене, не обязательно)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://celebrated-swan-a6df24.netlify.app",  # ваш старый Netlify URL
+        "https://ege-pro-100.netlify.app",            # если меняли имя
+        "http://localhost:3000",
+        "http://localhost:5173"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
